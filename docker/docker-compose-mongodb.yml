@@ -1,0 +1,17 @@
+version: '3.7'
+services:
+  mongodb:
+    image: mongo:latest
+    ports:
+      - 27017:27017
+    networks:
+      - messageservice
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
+
+
+networks:
+  messageservice:
