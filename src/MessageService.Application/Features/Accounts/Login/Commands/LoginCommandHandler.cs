@@ -1,5 +1,6 @@
 ﻿using MediatR;
-using MessageService.Application.Events;
+using MessageService.Application.Constants;
+using MessageService.Application.Events.Users;
 using MessageService.Application.Features.Accounts.Login.Validator;
 using MessageService.Application.Services.RabbitMq;
 using MessageService.Application.Services.Token;
@@ -40,13 +41,12 @@ namespace MessageService.Application.Features.Accounts.Login.Commands
             var user = await _userRepository.GetAsync(x => x.UserName == request.UserName);
             if (user == null)
             {
-                CreateUserLog(request.UserName, "Kullanıcı adı hatalı");
                 return new LoginCommandResult()
                 {
                     Success = false,
                     Messages = new List<MessageDto>()
                     {
-                        new MessageDto() { Message = "Lütfen bilgilerinizi kontrol ediniz" }
+                        new MessageDto() {Message = ApplicationErrorMessage.ApplicationError8}
                     }
                 };
             }
@@ -54,13 +54,13 @@ namespace MessageService.Application.Features.Accounts.Login.Commands
             var password = HashingHelper.HashPassword(request.Password, user.PasswordSalt);
             if (password != user.Password)
             {
-                CreateUserLog(request.UserName, "Şifre hatalı");
+                CreateUserLog(request.UserName, "Giriş başarısız. Şifre hatalı");
                 return new LoginCommandResult()
                 {
                     Success = false,
                     Messages = new List<MessageDto>()
                     {
-                        new MessageDto() { Message = "Lütfen bilgilerinizi kontrol ediniz" }
+                        new MessageDto() {Message = ApplicationErrorMessage.ApplicationError8}
                     }
                 };
             }
@@ -88,7 +88,7 @@ namespace MessageService.Application.Features.Accounts.Login.Commands
         private void CreateUserLog(string userName, string content)
         {
             var userLogEvent = new UserLogEvent(userName, content);
-            _rabbitMqService.Publish<UserLogEvent>(userLogEvent);
+            _rabbitMqService.Publish(userLogEvent, RabbitMqConstants.UserLogQueueName, RabbitMqConstants.UserLogRoutingKey);
         }
     }
 }

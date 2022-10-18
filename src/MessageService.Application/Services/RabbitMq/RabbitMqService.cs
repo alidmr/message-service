@@ -1,4 +1,5 @@
 using System.Text;
+using MessageService.Application.Constants;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
@@ -10,11 +11,6 @@ namespace MessageService.Application.Services.RabbitMq
         private readonly ConnectionFactory _connectionFactory;
         private IConnection _connection;
         private IModel _channel;
-
-        public static string ExchangeName = "MessageServiceExchange";
-        public static string RoutingKeyUserLog = "user-log-route";
-        public static string QueueName = "user-log";
-
         private readonly ILogger<RabbitMqService> _logger;
 
         public RabbitMqService(ConnectionFactory connectionFactory, ILogger<RabbitMqService> logger)
@@ -23,7 +19,7 @@ namespace MessageService.Application.Services.RabbitMq
             _logger = logger;
         }
 
-        public IModel Connect()
+        public IModel Connect(string queueName, string routingKey)
         {
             if (_channel != null && _channel.IsOpen)
             {
@@ -32,19 +28,19 @@ namespace MessageService.Application.Services.RabbitMq
 
             _connection = _connectionFactory.CreateConnection();
             _channel = _connection.CreateModel();
-            _channel.ExchangeDeclare(exchange: ExchangeName, type: "direct", durable: true, autoDelete: false);
+            _channel.ExchangeDeclare(exchange: RabbitMqConstants.ExchangeName, type: "direct", durable: true, autoDelete: false);
 
-            _channel.QueueDeclare(queue: QueueName, durable: true, exclusive: false, autoDelete: false, null);
-
-            _channel.QueueBind(queue: QueueName, exchange: ExchangeName, routingKey: RoutingKeyUserLog);
+            // _channel.QueueDeclare(queue: queueName, durable: true, exclusive: false, autoDelete: false, null);
+            //
+            // _channel.QueueBind(queue: queueName, exchange: RabbitMqConstants.ExchangeName, routingKey: routingKey);
 
             _logger.LogInformation("RabbitMq connected...");
             return _channel;
         }
 
-        public void Publish<T>(T @event)
+        public void Publish<T>(T @event, string queueName, string routingKey)
         {
-            _channel = Connect();
+            _channel = Connect(queueName, routingKey);
 
             var bodyString = JsonConvert.SerializeObject(@event);
             var body = Encoding.UTF8.GetBytes(bodyString);
@@ -52,7 +48,7 @@ namespace MessageService.Application.Services.RabbitMq
             var properties = _channel.CreateBasicProperties();
             properties.Persistent = true;
 
-            _channel.BasicPublish(exchange: ExchangeName, routingKey: RoutingKeyUserLog, basicProperties: properties, body: body);
+            _channel.BasicPublish(exchange: RabbitMqConstants.ExchangeName, routingKey: routingKey, basicProperties: properties, body: body);
         }
 
         public void Dispose()

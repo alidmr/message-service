@@ -10,11 +10,11 @@ namespace MessageService.Domain.Entities
         public string Content { get; private set; }
         public DateTime CreatedDate { get; private set; }
 
-        private UserLog(string userName, string content)
+        private UserLog(string userName, string content, DateTime createdDate)
         {
             UserName = userName;
             Content = content;
-            CreatedDate = DateTime.Now;
+            CreatedDate = createdDate;
         }
 
         public static UserLog Create(string userName, string content)
@@ -24,7 +24,7 @@ namespace MessageService.Domain.Entities
             if (string.IsNullOrEmpty(content))
                 throw new DomainException(DomainErrorMessage.DomainError8);
 
-            return new UserLog(userName, content);
+            return new UserLog(userName, content, DateTime.Now);
         }
     }
 }

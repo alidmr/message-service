@@ -4,7 +4,7 @@ namespace MessageService.Application.Services.RabbitMq
 {
     public interface IRabbitMqService : IDisposable
     {
-        IModel Connect();
-        void Publish<T>(T @event);
+        IModel Connect(string queueName, string routingKey);
+        void Publish<T>(T @event, string queueName, string routingKey);
     }
 }

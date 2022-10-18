@@ -1,6 +1,8 @@
 ﻿using MediatR;
 using MessageService.Application.Constants;
+using MessageService.Application.Events.Message;
 using MessageService.Application.Features.Messages.Send.Validator;
+using MessageService.Application.Services.RabbitMq;
 using MessageService.Domain.Entities;
 using MessageService.Domain.Repositories;
 using MessageService.Infrastructure.Dtos;
@@ -11,11 +13,13 @@ namespace MessageService.Application.Features.Messages.Send.Commands
     {
         private readonly IMessageRepository _messageRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IRabbitMqService _rabbitMqService;
 
-        public SendMessageCommandHandler(IMessageRepository messageRepository, IUserRepository userRepository)
+        public SendMessageCommandHandler(IMessageRepository messageRepository, IUserRepository userRepository, IRabbitMqService rabbitMqService)
         {
             _messageRepository = messageRepository;
             _userRepository = userRepository;
+            _rabbitMqService = rabbitMqService;
         }
 
         public async Task<SendMessageCommandResult> Handle(SendMessageCommand request, CancellationToken cancellationToken)
@@ -46,8 +50,11 @@ namespace MessageService.Application.Features.Messages.Send.Commands
                 };
             }
 
-            var message = Message.Create(request.Sender, request.Receiver, request.MessageContent);
-            await _messageRepository.AddAsync(message);
+            // var message = Message.Create(request.Sender, request.Receiver, request.MessageContent);
+            // await _messageRepository.AddAsync(message);
+
+            var messageEvent = new MessageCreatedEvent(request.Sender, request.Receiver, request.MessageContent, request.SenderUserName, request.ReceiverUserName);
+            _rabbitMqService.Publish(messageEvent, RabbitMqConstants.MessageQueueName, RabbitMqConstants.MessageRoutingKey);
 
             return new SendMessageCommandResult()
             {

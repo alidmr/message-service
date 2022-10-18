@@ -12,5 +12,9 @@
         public const string DomainError9 = "message sender cannot be empty";
         public const string DomainError10 = "message receiver cannot be empty";
         public const string DomainError11 = "message content cannot be empty";
+        public const string DomainError12 = "message sender user name cannot be empty";
+        public const string DomainError13 = "message receiver user name cannot be empty";
+        public const string DomainError14 = "blocking user cannot be empty";
+        public const string DomainError15 = "blocked user cannot be empty";
     }
 }

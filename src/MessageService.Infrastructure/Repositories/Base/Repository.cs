@@ -10,7 +10,7 @@ namespace MessageService.Infrastructure.Repositories.Base
     {
         private readonly IMongoCollection<TEntity> _collection;
 
-        public Repository(IMessageServiceContext context, string collectionName)
+        protected Repository(IMessageServiceContext context, string collectionName)
         {
             // _collection = context.GetCollection<TEntity>(typeof(TEntity).Name.ToLower());
             _collection = context.GetCollection<TEntity>(collectionName);

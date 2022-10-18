@@ -15,12 +15,12 @@ namespace MessageService.Domain.Entities
         public DateTime CreatedDate { get; private set; }
         public AccessToken Token { get; private set; }
 
-        private User(string firstName, string lastName, string userName)
+        private User(string firstName, string lastName, string userName, DateTime createdDate)
         {
             FirstName = firstName;
             LastName = lastName;
             UserName = userName;
-            CreatedDate = DateTime.Now;
+            CreatedDate = createdDate;
         }
 
         public static User Create(string firstName, string lastName, string userName)
@@ -34,7 +34,7 @@ namespace MessageService.Domain.Entities
             if (string.IsNullOrEmpty(userName))
                 throw new DomainException(DomainErrorMessage.DomainError4);
 
-            return new User(firstName, lastName, userName);
+            return new User(firstName, lastName, userName, DateTime.Now);
         }
 
         public User SetPassword(string password, string passwordSalt)

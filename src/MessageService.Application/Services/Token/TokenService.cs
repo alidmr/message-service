@@ -25,7 +25,7 @@ namespace MessageService.Application.Services.Token
 
             var accessToken = new AccessToken
             {
-                ExpirationDate = DateTime.Now.AddMinutes(10)
+                ExpirationDate = DateTime.Now.AddHours(1)
             };
 
             var tokenDescriptor = new SecurityTokenDescriptor

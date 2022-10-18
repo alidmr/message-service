@@ -20,4 +20,8 @@
     <ProjectReference Include="..\MessageService.Infrastructure\MessageService.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\Users\GetUsers" />
+  </ItemGroup>
+
 </Project>

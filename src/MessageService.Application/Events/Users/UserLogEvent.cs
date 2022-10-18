@@ -1,4 +1,4 @@
-﻿namespace MessageService.Application.Events
+﻿namespace MessageService.Application.Events.Users
 {
     public class UserLogEvent
     {

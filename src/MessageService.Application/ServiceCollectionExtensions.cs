@@ -33,6 +33,7 @@ namespace MessageService.Application
             services.AddSingleton<IRabbitMqService, RabbitMqService>();
 
             services.AddHostedService<UserLogService>();
+            services.AddHostedService<Services.Message.MessageService>();
 
             return services;
         }
