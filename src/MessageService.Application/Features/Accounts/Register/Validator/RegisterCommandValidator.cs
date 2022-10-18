@@ -1,7 +1,8 @@
 ﻿using FluentValidation;
 using MessageService.Application.Constants;
+using MessageService.Application.Features.Accounts.Register.Commands;
 
-namespace MessageService.Application.Features.Accounts.Commands
+namespace MessageService.Application.Features.Accounts.Register.Validator
 {
     public class RegisterCommandValidator : AbstractValidator<RegisterCommand>
     {
@@ -15,7 +16,7 @@ namespace MessageService.Application.Features.Accounts.Commands
 
             RuleFor(x => x.UserName).NotEmpty()
                 .WithMessage(ApplicationErrorMessage.ApplicationError4);
-            
+
             RuleFor(x => x.Password).NotEmpty()
                 .WithMessage(ApplicationErrorMessage.ApplicationError5);
         }

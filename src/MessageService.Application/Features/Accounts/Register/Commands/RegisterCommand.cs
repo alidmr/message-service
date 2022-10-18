@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace MessageService.Application.Features.Accounts.Commands
+namespace MessageService.Application.Features.Accounts.Register.Commands
 {
     public class RegisterCommand : IRequest<RegisterCommandResult>
     {

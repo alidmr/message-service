@@ -16,6 +16,7 @@ namespace MessageService.Infrastructure
             services.AddScoped<IMessageServiceContext, MessageServiceContext>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserLogRepository, UserLogRepository>();
+            services.AddScoped<IMessageRepository, MessageRepository>();
 
             return services;
         }

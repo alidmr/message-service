@@ -1,11 +1,12 @@
 ﻿using MediatR;
 using MessageService.Application.Constants;
+using MessageService.Application.Features.Accounts.Register.Validator;
 using MessageService.Domain.Entities;
 using MessageService.Domain.Repositories;
 using MessageService.Infrastructure.Dtos;
 using MessageService.Infrastructure.Helpers;
 
-namespace MessageService.Application.Features.Accounts.Commands
+namespace MessageService.Application.Features.Accounts.Register.Commands
 {
     public class RegisterCommandHandler : IRequestHandler<RegisterCommand, RegisterCommandResult>
     {

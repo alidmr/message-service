@@ -9,5 +9,8 @@
         public const string DomainError6 = "user pasword salt cannot be empty";
         public const string DomainError7 = "user log user name cannot be empty";
         public const string DomainError8 = "user log content cannot be empty";
+        public const string DomainError9 = "message sender cannot be empty";
+        public const string DomainError10 = "message receiver cannot be empty";
+        public const string DomainError11 = "message content cannot be empty";
     }
 }

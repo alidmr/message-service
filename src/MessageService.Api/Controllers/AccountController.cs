@@ -1,6 +1,6 @@
 ﻿using MediatR;
-using MessageService.Application.Features.Accounts.Commands;
 using MessageService.Application.Features.Accounts.Login.Commands;
+using MessageService.Application.Features.Accounts.Register.Commands;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MessageService.Api.Controllers

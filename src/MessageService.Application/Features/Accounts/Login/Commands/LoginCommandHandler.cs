@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using MessageService.Application.Events;
+using MessageService.Application.Features.Accounts.Login.Validator;
 using MessageService.Application.Services.RabbitMq;
 using MessageService.Application.Services.Token;
 using MessageService.Domain.Repositories;

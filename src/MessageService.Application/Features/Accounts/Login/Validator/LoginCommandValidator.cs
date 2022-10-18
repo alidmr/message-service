@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
+using MessageService.Application.Features.Accounts.Login.Commands;
 
-namespace MessageService.Application.Features.Accounts.Login.Commands
+namespace MessageService.Application.Features.Accounts.Login.Validator
 {
     public class LoginCommandValidator : AbstractValidator<LoginCommand>
     {
