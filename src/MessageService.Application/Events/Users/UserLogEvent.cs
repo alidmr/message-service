@@ -1,6 +1,8 @@
-﻿namespace MessageService.Application.Events.Users
+﻿using MediatR;
+
+namespace MessageService.Application.Events.Users
 {
-    public class UserLogEvent
+    public class UserLogEvent : IEvent, INotification
     {
         public string UserName { get; private set; }
         public string Content { get; private set; }

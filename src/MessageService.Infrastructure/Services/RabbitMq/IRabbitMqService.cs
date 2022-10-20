@@ -1,6 +1,6 @@
 ﻿using RabbitMQ.Client;
 
-namespace MessageService.Application.Services.RabbitMq
+namespace MessageService.Infrastructure.Services.RabbitMq
 {
     public interface IRabbitMqService : IDisposable
     {

@@ -2,12 +2,12 @@
 using FluentAssertions;
 using MessageService.Application.Constants;
 using MessageService.Application.Features.Accounts.Login.Commands;
-using MessageService.Application.Services.RabbitMq;
 using MessageService.Application.Services.Token;
 using MessageService.Domain.Entities;
 using MessageService.Domain.Repositories;
 using MessageService.Infrastructure.Dtos;
 using MessageService.Infrastructure.Helpers;
+using MessageService.Infrastructure.Services.RabbitMq;
 using Moq;
 using NUnit.Framework;
 

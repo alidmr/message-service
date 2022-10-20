@@ -34,7 +34,7 @@ namespace MessageService.Application.Middlewares
         {
             var errorMessage = "İşlem sırasında bir hata oluştu. Daha sonra tekrar deneyiniz";
             HttpStatusCode statusCode;
-            var message = exception.Message;
+            string message;
 
             if (exception is DomainException)
             {
@@ -56,6 +56,8 @@ namespace MessageService.Application.Middlewares
                 statusCode = HttpStatusCode.InternalServerError;
                 message = errorMessage;
             }
+            
+            _logger.LogError($"Error. Message : {message} StatusCode : {statusCode}");
 
             var response = new
             {

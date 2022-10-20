@@ -1,6 +1,6 @@
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 using System.Text;
-using MessageService.Application.Constants;
+using MessageService.Infrastructure.Constants;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Polly;
@@ -9,7 +9,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using RabbitMQ.Client.Exceptions;
 
-namespace MessageService.Application.Services.RabbitMq
+namespace MessageService.Infrastructure.Services.RabbitMq
 {
     public class RabbitMqService : IRabbitMqService
     {
@@ -25,10 +25,10 @@ namespace MessageService.Application.Services.RabbitMq
             _connectionFactory = connectionFactory;
             _logger = logger;
         }
-        
+       
         private bool IsConnected => _connection != null && _connection.IsOpen && !_disposed;
         private bool IsChannel => _channel != null && _channel.IsOpen;
-
+        
         public IModel GetChannel()
         {
             if (!IsConnected)
@@ -47,7 +47,8 @@ namespace MessageService.Application.Services.RabbitMq
             _logger.LogInformation("RabbitMq create channel...");
             return _channel;
         }
-        private bool Connect()
+
+         private bool Connect()
         {
             _logger.LogInformation("RabbitMq connecting...");
 

@@ -7,7 +7,7 @@ namespace MessageService.Infrastructure.Repositories
 {
     public class UserRepository : Repository<User>, IUserRepository
     {
-        public UserRepository(IMessageServiceContext context) : base(context, "Users")
+        public UserRepository(IMessageServiceContext context) : base(context)
         {
         }
     }

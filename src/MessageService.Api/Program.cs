@@ -79,7 +79,7 @@ namespace MessageService.Api
                     };
                 });
 
-            builder.Services.AddApplication(configuration);
+            builder.Services.AddApplication();
             builder.Services.AddInfrastructure(configuration);
 
             var app = builder.Build();

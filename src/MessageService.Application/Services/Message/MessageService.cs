@@ -1,9 +1,8 @@
-﻿using System.Net.Http.Json;
-using System.Text;
-using MessageService.Application.Constants;
+﻿using System.Text;
 using MessageService.Application.Events.Message;
-using MessageService.Application.Services.RabbitMq;
 using MessageService.Domain.Repositories;
+using MessageService.Infrastructure.Constants;
+using MessageService.Infrastructure.Services.RabbitMq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -42,6 +41,8 @@ namespace MessageService.Application.Services.Message
             _channel.QueueDeclare(queue: RabbitMqConstants.MessageQueueName, durable: true, exclusive: false, autoDelete: false, null);
 
             _channel.QueueBind(queue: RabbitMqConstants.MessageQueueName, exchange: RabbitMqConstants.ExchangeName, routingKey: RabbitMqConstants.MessageRoutingKey);
+
+            _channel.BasicQos(0, 50, false);
 
             var consumer = new AsyncEventingBasicConsumer(_channel);
             _channel.BasicConsume(queue: RabbitMqConstants.MessageQueueName, autoAck: false, consumer);

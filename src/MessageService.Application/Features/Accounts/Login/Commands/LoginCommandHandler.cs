@@ -2,11 +2,12 @@
 using MessageService.Application.Constants;
 using MessageService.Application.Events.Users;
 using MessageService.Application.Features.Accounts.Login.Validator;
-using MessageService.Application.Services.RabbitMq;
 using MessageService.Application.Services.Token;
 using MessageService.Domain.Repositories;
+using MessageService.Infrastructure.Constants;
 using MessageService.Infrastructure.Dtos;
 using MessageService.Infrastructure.Helpers;
+using MessageService.Infrastructure.Services.RabbitMq;
 
 namespace MessageService.Application.Features.Accounts.Login.Commands
 {

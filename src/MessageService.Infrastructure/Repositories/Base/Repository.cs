@@ -10,10 +10,9 @@ namespace MessageService.Infrastructure.Repositories.Base
     {
         private readonly IMongoCollection<TEntity> _collection;
 
-        protected Repository(IMessageServiceContext context, string collectionName)
+        protected Repository(IMessageServiceContext context)
         {
-            // _collection = context.GetCollection<TEntity>(typeof(TEntity).Name.ToLower());
-            _collection = context.GetCollection<TEntity>(collectionName);
+            _collection = context.GetCollection<TEntity>(typeof(TEntity).Name);
         }
 
         public async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> predicate)

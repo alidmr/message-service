@@ -1,6 +1,6 @@
 ﻿namespace MessageService.Application.Events.Message
 {
-    public class MessageCreatedEvent
+    public class MessageCreatedEvent : IEvent
     {
         public MessageCreatedEvent(string sender, string receiver, string content, string senderUserName, string receiverUserName)
         {

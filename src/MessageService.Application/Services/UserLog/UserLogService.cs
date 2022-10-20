@@ -1,9 +1,8 @@
 ﻿using System.Text;
-using MessageService.Application.Constants;
+using MediatR;
 using MessageService.Application.Events.Users;
-using MessageService.Application.Services.RabbitMq;
-using MessageService.Domain.Repositories;
-using Microsoft.Extensions.DependencyInjection;
+using MessageService.Infrastructure.Constants;
+using MessageService.Infrastructure.Services.RabbitMq;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -16,14 +15,14 @@ namespace MessageService.Application.Services.UserLog
     {
         private readonly IRabbitMqService _rabbitMqService;
         private readonly ILogger<UserLogService> _logger;
-        private readonly IServiceProvider _serviceProvider;
         private IModel _channel;
+        private readonly IMediator _mediator;
 
-        public UserLogService(IRabbitMqService rabbitMqService, ILogger<UserLogService> logger, IServiceProvider serviceProvider)
+        public UserLogService(IRabbitMqService rabbitMqService, ILogger<UserLogService> logger, IMediator mediator)
         {
             _rabbitMqService = rabbitMqService;
             _logger = logger;
-            _serviceProvider = serviceProvider;
+            _mediator = mediator;
         }
 
         public override Task StartAsync(CancellationToken cancellationToken)
@@ -35,28 +34,45 @@ namespace MessageService.Application.Services.UserLog
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            using var scope = _serviceProvider.CreateScope();
-            var userLogRepository = scope.ServiceProvider.GetRequiredService<IUserLogRepository>();
-
             _channel.QueueDeclare(queue: RabbitMqConstants.UserLogQueueName, durable: true, exclusive: false, autoDelete: false, null);
 
             _channel.QueueBind(queue: RabbitMqConstants.UserLogQueueName, exchange: RabbitMqConstants.ExchangeName, routingKey: RabbitMqConstants.UserLogRoutingKey);
 
-            var consumer = new AsyncEventingBasicConsumer(_channel);
+            _channel.BasicQos(0, 50, false);
+
+            // var consumer = new AsyncEventingBasicConsumer(_channel);
+            var consumer = new EventingBasicConsumer(_channel);
             _channel.BasicConsume(queue: RabbitMqConstants.UserLogQueueName, autoAck: false, consumer);
 
-            consumer.Received += async (sender, @event) =>
+            try
             {
-                var userLogEvent = JsonConvert.DeserializeObject<UserLogEvent>(Encoding.UTF8.GetString(@event.Body.ToArray()));
-                if (userLogEvent != null)
+                consumer.Received += (sender, @event) =>
                 {
-                    var userLog = Domain.Entities.UserLog.Create(userLogEvent.UserName, userLogEvent.Content);
-                    await userLogRepository.AddAsync(userLog);
-                }
+                    try
+                    {
+                        var userLogEvent = JsonConvert.DeserializeObject<UserLogEvent>(Encoding.UTF8.GetString(@event.Body.ToArray()));
+                        if (userLogEvent != null)
+                        {
+                            _mediator.Publish(userLogEvent, stoppingToken).GetAwaiter().GetResult();
+                            // _mediator.Send(userLogEvent, stoppingToken).GetAwaiter().GetResult();
+                        }
 
-                _channel.BasicAck(@event.DeliveryTag, false);
-            };
+                        _channel.BasicAck(@event.DeliveryTag, false);
+                    }
+                    catch (Exception exception)
+                    {
+                        Console.WriteLine(exception);
+                        throw new Exception(exception.ToString());
+                    }
+                };
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
+            }
+
             _logger.LogInformation("User Log consumed...");
+
             return Task.CompletedTask;
         }
 
