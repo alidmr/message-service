@@ -30,6 +30,7 @@ services:
     depends_on:
       - rabbitmq
       - mongodb
+      - elasticsearch
 
   elasticsearch:
     container_name: message-service-elasticsearch

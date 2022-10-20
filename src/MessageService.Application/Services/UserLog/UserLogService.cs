@@ -28,7 +28,7 @@ namespace MessageService.Application.Services.UserLog
 
         public override Task StartAsync(CancellationToken cancellationToken)
         {
-            _channel = _rabbitMqService.Connect(RabbitMqConstants.UserLogQueueName, RabbitMqConstants.UserLogRoutingKey);
+            _channel = _rabbitMqService.GetChannel();
 
             return base.StartAsync(cancellationToken);
         }

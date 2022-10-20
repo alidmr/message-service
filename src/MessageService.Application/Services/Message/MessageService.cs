@@ -29,7 +29,7 @@ namespace MessageService.Application.Services.Message
 
         public override Task StartAsync(CancellationToken cancellationToken)
         {
-            _channel = _rabbitMqService.Connect(RabbitMqConstants.MessageQueueName, RabbitMqConstants.MessageRoutingKey);
+            _channel = _rabbitMqService.GetChannel();
             return base.StartAsync(cancellationToken);
         }
 
