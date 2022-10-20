@@ -1,10 +1,10 @@
 ﻿using MessageService.Domain.Entities;
-using MessageService.Domain.ValueObjects;
+using MessageService.Infrastructure.Dtos;
 
 namespace MessageService.Application.Services.Token
 {
     public interface ITokenService
     {
-        AccessToken CreateToken(User user);
+        TokenDto CreateToken(User user);
     }
 }

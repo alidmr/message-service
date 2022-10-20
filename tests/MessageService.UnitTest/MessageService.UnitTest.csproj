@@ -23,8 +23,4 @@
       <ProjectReference Include="..\..\src\MessageService.Api\MessageService.Api.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Application\Services" />
-    </ItemGroup>
-
 </Project>

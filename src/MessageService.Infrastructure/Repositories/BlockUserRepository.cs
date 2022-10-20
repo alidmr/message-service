@@ -7,7 +7,7 @@ namespace MessageService.Infrastructure.Repositories
 {
     public class BlockUserRepository : Repository<BlockUser>, IBlockUserRepository
     {
-        public BlockUserRepository(IMessageServiceContext context) : base(context, "block-users")
+        public BlockUserRepository(IMessageServiceContext context) : base(context, "BlockUsers")
         {
         }
     }

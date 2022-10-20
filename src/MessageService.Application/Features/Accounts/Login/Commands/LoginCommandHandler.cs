@@ -66,11 +66,7 @@ namespace MessageService.Application.Features.Accounts.Login.Commands
             }
 
             var token = _tokenService.CreateToken(user);
-            user.SetToken(token);
-            await _userRepository.UpdateAsync(user.Id, user);
-
             CreateUserLog(request.UserName, "Giriş başarlı");
-
             return new LoginCommandResult()
             {
                 Success = true,

@@ -2,7 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using MessageService.Domain.Entities;
-using MessageService.Domain.ValueObjects;
+using MessageService.Infrastructure.Dtos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -17,13 +17,13 @@ namespace MessageService.Application.Services.Token
             _configuration = configuration;
         }
 
-        public AccessToken CreateToken(User user)
+        public TokenDto CreateToken(User user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Token:SecurityKey"]));
             var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             var tokenHandler = new JwtSecurityTokenHandler();
 
-            var accessToken = new AccessToken
+            var token = new TokenDto
             {
                 ExpirationDate = DateTime.Now.AddHours(1)
             };
@@ -39,14 +39,14 @@ namespace MessageService.Application.Services.Token
                     new Claim("UserName", user.UserName),
                     new Claim(ClaimTypes.Surname, user.LastName)
                 }),
-                Expires = accessToken.ExpirationDate,
+                Expires = token.ExpirationDate,
                 NotBefore = DateTime.Now,
                 SigningCredentials = signingCredentials,
             };
 
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            accessToken.Token = tokenHandler.WriteToken(token);
-            return accessToken;
+            var securityToken = tokenHandler.CreateToken(tokenDescriptor);
+            token.Token = tokenHandler.WriteToken(securityToken);
+            return token;
         }
     }
 }

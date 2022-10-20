@@ -1,7 +1,6 @@
 ﻿using MessageService.Domain.Constants;
 using MessageService.Domain.Entities.Base;
 using MessageService.Domain.Exceptions;
-using MessageService.Domain.ValueObjects;
 
 namespace MessageService.Domain.Entities
 {
@@ -13,7 +12,6 @@ namespace MessageService.Domain.Entities
         public string Password { get; private set; }
         public string PasswordSalt { get; private set; }
         public DateTime CreatedDate { get; private set; }
-        public AccessToken Token { get; private set; }
 
         private User(string firstName, string lastName, string userName, DateTime createdDate)
         {
@@ -47,12 +45,6 @@ namespace MessageService.Domain.Entities
 
             Password = password;
             PasswordSalt = passwordSalt;
-            return this;
-        }
-
-        public User SetToken(AccessToken token)
-        {
-            Token = token;
             return this;
         }
     }

@@ -6,7 +6,7 @@ using MessageService.Application.Services.RabbitMq;
 using MessageService.Application.Services.Token;
 using MessageService.Domain.Entities;
 using MessageService.Domain.Repositories;
-using MessageService.Domain.ValueObjects;
+using MessageService.Infrastructure.Dtos;
 using MessageService.Infrastructure.Helpers;
 using Moq;
 using NUnit.Framework;
@@ -92,12 +92,11 @@ namespace MessageService.UnitTest.Application.Handlers.Accounts
 
             var user = User.Create(faker.Random.String(), faker.Random.String(), faker.Random.String());
             user.SetPassword(password, salt);
-            var accessToken = new AccessToken()
+            var token = new TokenDto()
             {
                 Token = "test token",
                 ExpirationDate = DateTime.Now.AddMinutes(5)
             };
-            user.SetToken(accessToken);
             var loginCommand = new LoginCommand()
             {
                 UserName = "ali.demir",
@@ -107,16 +106,14 @@ namespace MessageService.UnitTest.Application.Handlers.Accounts
             _mockUserRepository.Setup(x => x.GetAsync(x => x.UserName == loginCommand.UserName))
                 .ReturnsAsync(user);
 
-            _mockTokenService.Setup(x => x.CreateToken(user)).Returns(accessToken);
-
-            _mockUserRepository.Setup(x => x.UpdateAsync(user.Id, user));
+            _mockTokenService.Setup(x => x.CreateToken(user)).Returns(token);
 
             var handler = new LoginCommandHandler(_mockUserRepository.Object, _mockTokenService.Object, _mockRabbitMqService.Object);
 
             var result = await handler.Handle(loginCommand, CancellationToken.None);
 
             result.Success.Should().BeTrue();
-            result.Token.Should().Be(accessToken);
+            result.Token.Should().Be(token);
         }
     }
 }

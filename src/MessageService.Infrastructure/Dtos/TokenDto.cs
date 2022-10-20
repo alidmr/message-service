@@ -1,6 +1,6 @@
-﻿namespace MessageService.Domain.ValueObjects
+﻿namespace MessageService.Infrastructure.Dtos
 {
-    public class AccessToken
+    public class TokenDto
     {
         public string Token { get; set; }
         public DateTime ExpirationDate { get; set; }

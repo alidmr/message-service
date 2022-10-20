@@ -7,7 +7,7 @@ namespace MessageService.Infrastructure.Repositories
 {
     public class UserLogRepository : Repository<UserLog>, IUserLogRepository
     {
-        public UserLogRepository(IMessageServiceContext context) : base(context, "user-logs")
+        public UserLogRepository(IMessageServiceContext context) : base(context, "UserLogs")
         {
         }
     }
