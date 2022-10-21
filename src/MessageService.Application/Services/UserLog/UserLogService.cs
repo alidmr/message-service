@@ -1,8 +1,9 @@
 ﻿using System.Text;
-using MediatR;
 using MessageService.Application.Events.Users;
+using MessageService.Domain.Repositories;
 using MessageService.Infrastructure.Constants;
 using MessageService.Infrastructure.Services.RabbitMq;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -16,13 +17,13 @@ namespace MessageService.Application.Services.UserLog
         private readonly IRabbitMqService _rabbitMqService;
         private readonly ILogger<UserLogService> _logger;
         private IModel _channel;
-        private readonly IMediator _mediator;
+        private readonly IServiceProvider _serviceProvider;
 
-        public UserLogService(IRabbitMqService rabbitMqService, ILogger<UserLogService> logger, IMediator mediator)
+        public UserLogService(IRabbitMqService rabbitMqService, ILogger<UserLogService> logger, IServiceProvider serviceProvider)
         {
             _rabbitMqService = rabbitMqService;
             _logger = logger;
-            _mediator = mediator;
+            _serviceProvider = serviceProvider;
         }
 
         public override Task StartAsync(CancellationToken cancellationToken)
@@ -34,46 +35,34 @@ namespace MessageService.Application.Services.UserLog
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _channel.QueueDeclare(queue: RabbitMqConstants.UserLogQueueName, durable: true, exclusive: false, autoDelete: false, null);
-
-            _channel.QueueBind(queue: RabbitMqConstants.UserLogQueueName, exchange: RabbitMqConstants.ExchangeName, routingKey: RabbitMqConstants.UserLogRoutingKey);
-
-            _channel.BasicQos(0, 50, false);
-
-            // var consumer = new AsyncEventingBasicConsumer(_channel);
-            var consumer = new EventingBasicConsumer(_channel);
-            _channel.BasicConsume(queue: RabbitMqConstants.UserLogQueueName, autoAck: false, consumer);
-
-            try
+            using (var scope = _serviceProvider.CreateScope())
             {
-                consumer.Received += (sender, @event) =>
+                var userLogRepository = scope.ServiceProvider.GetRequiredService<IUserLogRepository>();
+                _channel.QueueDeclare(queue: RabbitMqConstants.UserLogQueueName, durable: true, exclusive: false, autoDelete: false, null);
+
+                _channel.QueueBind(queue: RabbitMqConstants.UserLogQueueName, exchange: RabbitMqConstants.ExchangeName, routingKey: RabbitMqConstants.UserLogRoutingKey);
+
+                _channel.BasicQos(0, 10, false);
+
+                var consumer = new AsyncEventingBasicConsumer(_channel);
+                _channel.BasicConsume(queue: RabbitMqConstants.UserLogQueueName, autoAck: false, consumer);
+
+                consumer.Received += async (sender, @event) =>
                 {
-                    try
+                    var userLogEvent = JsonConvert.DeserializeObject<UserLogEvent>(Encoding.UTF8.GetString(@event.Body.ToArray()));
+                    if (userLogEvent != null)
                     {
-                        var userLogEvent = JsonConvert.DeserializeObject<UserLogEvent>(Encoding.UTF8.GetString(@event.Body.ToArray()));
-                        if (userLogEvent != null)
-                        {
-                            _mediator.Publish(userLogEvent, stoppingToken).GetAwaiter().GetResult();
-                            // _mediator.Send(userLogEvent, stoppingToken).GetAwaiter().GetResult();
-                        }
+                        var userLog = Domain.Entities.UserLog.Create(userLogEvent.UserName, userLogEvent.Content);
+                        await userLogRepository.AddAsync(userLog);
+                    }
 
-                        _channel.BasicAck(@event.DeliveryTag, false);
-                    }
-                    catch (Exception exception)
-                    {
-                        Console.WriteLine(exception);
-                        throw new Exception(exception.ToString());
-                    }
+                    _channel.BasicAck(@event.DeliveryTag, false);
                 };
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine(exception);
-            }
 
-            _logger.LogInformation("User Log consumed...");
+                _logger.LogInformation("User Log consumed...");
 
-            return Task.CompletedTask;
+                return Task.CompletedTask;
+            }
         }
 
         public override Task StopAsync(CancellationToken cancellationToken)

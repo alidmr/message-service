@@ -30,7 +30,7 @@ namespace MessageService.Infrastructure
                     UserName = configuration["RabbitMqSettings:UserName"],
                     Password = configuration["RabbitMqSettings:Password"],
                     Port = Convert.ToInt32(configuration["RabbitMqSettings:Port"]),
-                    // DispatchConsumersAsync = true
+                    DispatchConsumersAsync = true
                 };
                 return connectionFactory;
             });

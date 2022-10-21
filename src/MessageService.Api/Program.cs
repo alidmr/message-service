@@ -79,8 +79,8 @@ namespace MessageService.Api
                     };
                 });
 
-            builder.Services.AddApplication();
             builder.Services.AddInfrastructure(configuration);
+            builder.Services.AddApplication();
 
             var app = builder.Build();
 

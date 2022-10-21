@@ -1,7 +1,5 @@
 ﻿using System.Reflection;
 using MediatR;
-using MessageService.Application.EventHandlers.UserLogs;
-using MessageService.Application.Events.Users;
 using MessageService.Application.Services.Token;
 using MessageService.Application.Services.UserLog;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,12 +13,10 @@ namespace MessageService.Application
         {
             services.AddMediatR(Assembly.GetExecutingAssembly());
 
-            services.AddScoped<INotificationHandler<UserLogEvent>, UserLogEventHandler>();
-
             services.AddScoped<ITokenService, TokenService>();
 
             services.AddHostedService<UserLogService>();
-            //services.AddHostedService<Services.Message.MessageService>();
+            services.AddHostedService<Services.Message.MessageService>();
 
             return services;
         }
