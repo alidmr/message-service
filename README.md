@@ -49,6 +49,7 @@ $ docker rm [container_id]
 
 ## Technologies implemented:
 
+- [x] .net6
 - [x] dockerize
 - [x] docker compose
 - [x] mongodb
