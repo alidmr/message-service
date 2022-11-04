@@ -99,6 +99,8 @@ namespace MessageService.Api
 
             app.MapControllers();
 
+            //app.UseRabbitMqListener();
+
             app.Run();
         }
 
