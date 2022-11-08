@@ -87,7 +87,7 @@ namespace MessageService.Infrastructure.Services.RabbitMq
             var body = Encoding.UTF8.GetBytes(bodyString);
 
             var properties = _channel.CreateBasicProperties();
-            properties.Persistent = true;
+            properties.Persistent = true; // messagebroker down olsa bile mesajları storagedan getir. diske yazılma maliyeti olduğu için hızı etkileyebilir
 
             _channel.BasicPublish(exchange: RabbitMqConstants.ExchangeName, routingKey: routingKey, basicProperties: properties, body: body);
         }
